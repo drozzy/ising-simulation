@@ -20,17 +20,6 @@ def get_dH(lattice, location):
         Hflip += lattice[ii, jj] * lattice[i, j]
     return Hflip - H
 
-
-
-def neighbours_sum(lattice, loc):
-    i, j = loc
-    N, _ = lattice.shape
-    up = (i, (j-1)%N)
-    left = ((i-1)%N, j)
-    right = ((i+1)%N, j)
-    down = (i, (j+1)%N)
-    return lattice[up] + lattice[down] + lattice[left] + lattice[right]
-
 def step(lattice, T):
     # Pick a random position in a lattice
     (N, _) = lattice.shape
@@ -42,28 +31,17 @@ def step(lattice, T):
     maybe_flip(lattice, dH, (i, j), T)
     return lattice
 
-
-
 def maybe_flip(lattice, dH, loc, T):
     i, j = loc
     
     if dH < 0:
         lattice[i,j] = -lattice[i,j]
     elif np.random.rand() < np.exp(-dH / T):
-            lattice[i, j] = -lattice[i,j]
+        lattice[i, j] = -lattice[i,j]
+    
     return lattice
 
 def energy(config):
-    energy = 0
-    for i in range(len(config)):
-        for j in range(len(config)):
-            entry = config[i,j]
-            nb = neighbours_sum(config, (i, j))
-            energy += -nb*entry
-    return energy/4.
-
-def calcEnergy(config):
-    '''Energy of a given configuration'''
     energy = 0
     N, _ = config.shape
     for i in range(len(config)):
@@ -73,8 +51,6 @@ def calcEnergy(config):
             energy += -nb*S
     return energy/4.
 
-
-def mag(config):
-    '''Magnetization of a given configuration'''
-    mag = np.sum(config)
-    return mag
+def magnetization(config):
+    return np.sum(config)
+    
